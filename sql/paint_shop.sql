@@ -1,6 +1,6 @@
 -- ============================================================
 -- Online Paint Shop - Database Schema
--- 淡江大學資訊工程學系 112 學年度專題
+-- Tamkang University, Dept. of Computer Science and Information Engineering — Capstone Project, Academic Year 112
 -- ============================================================
 
 CREATE DATABASE IF NOT EXISTS paint CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

@@ -1,7 +1,7 @@
 {
     "name": "paint-shop/online-paint-shop",
-    "description": "Online Paint Shop — 淡江大學資訊工程學系 112 學年度專題",
-    "homepage": "https://github.com/yhshou68/Paint-Shop-Cakephp",
+    "description": "Online Paint Shop — Tamkang University CSIE Capstone Project, Academic Year 112",
+    "homepage": "https://github.com/yasin0512/Online-Paint-Shop-CakePHP-project",
     "type": "project",
     "license": "MIT",
     "require": {

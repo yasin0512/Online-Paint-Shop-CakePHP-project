@@ -27,6 +27,3 @@ Thumbs.db
 
 # Uploaded files
 /webroot/files/
-
-# Python virtual environment (not part of this project)
-.venv/

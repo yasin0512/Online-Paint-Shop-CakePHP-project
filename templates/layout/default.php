@@ -33,7 +33,7 @@
 </main>
 
 <footer class="footer">
-    <p>&copy; <?= date('Y') ?> Online Paint Shop — 淡江大學資訊工程學系 112 學年度專題</p>
+    <p>&copy; <?= date('Y') ?> Online Paint Shop — Tamkang University, Dept. of CSIE | Academic Year 112 Capstone Project</p>
 </footer>
 
 <script src="<?= $this->Url->js('app') ?>"></script>
