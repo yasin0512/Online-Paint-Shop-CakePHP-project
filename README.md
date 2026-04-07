@@ -11,10 +11,10 @@ An online e-commerce platform for purchasing paint, built with CakePHP 5. Custom
 
 | Student ID | Name |
 |---|---|
-| 409840070 | Yasin Guo |
-| 409840062 | Peng Yu Chen |
-| 409840245 | Yung-Hsin Shou |
-| 409840302 | Po Ming Su |
+| 409840070 | 郭雅馨 Yasin Guo |
+| 409840062 | 陳芃諭 Peng Yu Chen |
+| 409840245 | 壽永馨 Yung-Hsin Shou |
+| 409840302 | 蘇柏銘 Po Ming Su |
 
 Advisor: Prof. Feng-Cheng Chang
 
