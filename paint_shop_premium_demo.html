@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Paint Shop — Demo</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f7;min-height:100vh}
+.navbar{background:#0f0f23;padding:0 1.5rem;height:58px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-size:15px;font-weight:600;text-decoration:none}
+.brand-icon{width:32px;height:32px;background:#4f46e5;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.nav-links{display:flex;gap:4px;list-style:none;align-items:center}
+.nav-btn{background:transparent;border:none;color:#9ca3af;font-size:13px;padding:6px 12px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;font-family:inherit}
+.nav-btn:hover,.nav-btn.active{background:rgba(255,255,255,.1);color:#fff}
+.cart-dot{background:#ef4444;color:#fff;font-size:10px;font-weight:600;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-left:2px}
+.page{display:none}
+.page.active{display:block}
+.hero{background:#0f0f23;padding:2.5rem 1.5rem;color:#fff;position:relative;overflow:hidden}
+.hero-content{max-width:500px;position:relative;z-index:2}
+.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:.08em;color:#818cf8;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.hero h1{font-size:30px;font-weight:700;line-height:1.3;margin-bottom:10px}
+.hero h1 span{color:#a5b4fc}
+.hero p{font-size:14px;color:#9ca3af;margin-bottom:1.5rem;line-height:1.6}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.hero-orbs{position:absolute;top:0;right:0;bottom:0;width:320px;display:flex;align-items:center;justify-content:center;opacity:.5;z-index:1}
+.orb{position:absolute;border-radius:50%}
+.btn-hero{padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:none;display:flex;align-items:center;gap:7px;transition:all .15s;font-family:inherit}
+.btn-hero:hover{opacity:.9}
+.btn-cta{background:#4f46e5;color:#fff}
+.btn-ghost{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.15)}
+.stats-bar{background:#1e1b4b;padding:14px 1.5rem;display:flex;gap:2rem;flex-wrap:wrap}
+.stat{display:flex;align-items:center;gap:10px}
+.stat-num{font-size:18px;font-weight:700;color:#fff}
+.stat-label{font-size:12px;color:#818cf8}
+.container{max-width:1000px;margin:0 auto;padding:1.25rem 1.5rem}
+.section-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1rem}
+.section-title{font-size:16px;font-weight:600;color:#1f2937;display:flex;align-items:center;gap:8px}
+.section-sub{font-size:12px;color:#6b7280}
+.filter-row{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.filter-chip{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #d1d5db;background:transparent;color:#6b7280;transition:all .15s;font-family:inherit}
+.filter-chip:hover,.filter-chip.active{background:#4f46e5;color:#fff;border-color:#4f46e5}
+.paint-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;margin-bottom:1.5rem}
+.paint-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;cursor:pointer;transition:all .18s}
+.paint-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.1);border-color:#c7d2fe}
+.swatch{height:110px;position:relative;display:flex;align-items:flex-end;padding:8px}
+.swatch-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px}
+.card-body{padding:12px}
+.card-name{font-size:13px;font-weight:600;color:#1f2937;margin-bottom:3px}
+.card-code{font-size:11px;color:#6b7280;font-family:monospace;margin-bottom:6px}
+.card-footer{display:flex;justify-content:space-between;align-items:center}
+.card-price{font-size:14px;font-weight:700;color:#4f46e5}
+.add-btn{width:28px;height:28px;background:#4f46e5;border:none;border-radius:8px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit}
+.add-btn:hover{background:#3730a3}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:20px;font-weight:600}
+.badge-green{background:#d1fae5;color:#065f46}
+.badge-amber{background:#fef3c7;color:#92400e}
+.badge-red{background:#fee2e2;color:#991b1b}
+.badge-blue{background:#dbeafe;color:#1e40af}
+.badge-purple{background:#ede9fe;color:#5b21b6}
+.detail-back{display:flex;align-items:center;gap:6px;font-size:13px;color:#6b7280;cursor:pointer;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid #e5e7eb}
+.detail-back:hover{color:#4f46e5}
+.detail-layout{display:flex;gap:2rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.detail-swatch{width:220px;min-height:220px;border-radius:16px;flex-shrink:0;position:relative;overflow:hidden}
+.detail-swatch-inner{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:14px}
+.detail-info{flex:1;min-width:200px}
+.detail-name{font-size:22px;font-weight:700;color:#1f2937;margin-bottom:8px}
+.detail-meta-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.detail-desc{font-size:13px;color:#6b7280;line-height:1.6;margin-bottom:14px}
+.detail-price{font-size:28px;font-weight:700;color:#4f46e5;margin-bottom:16px;display:flex;align-items:baseline;gap:4px}
+.detail-price span{font-size:14px;color:#6b7280;font-weight:400}
+.qty-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.qty-ctrl{display:flex;align-items:center;border:1px solid #d1d5db;border-radius:10px;overflow:hidden}
+.qty-btn{width:34px;height:34px;background:transparent;border:none;font-size:18px;cursor:pointer;color:#374151;display:flex;align-items:center;justify-content:center;transition:background .15s;font-family:inherit}
+.qty-btn:hover{background:#f3f4f6}
+.qty-val{width:36px;text-align:center;font-size:14px;font-weight:600;color:#1f2937;border-left:1px solid #e5e7eb;border-right:1px solid #e5e7eb;height:34px;line-height:34px}
+.btn-add-cart{background:#4f46e5;color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;font-family:inherit}
+.btn-add-cart:hover{background:#3730a3}
+.btn-secondary{background:#f9fafb;color:#374151;border:1px solid #d1d5db;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .15s;font-family:inherit}
+.btn-secondary:hover{border-color:#6b7280}
+.feature-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.cart-empty{text-align:center;padding:3rem 1rem;color:#6b7280}
+.cart-empty-icon{width:56px;height:56px;background:#f3f4f6;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.cart-item{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.cart-swatch{width:40px;height:40px;border-radius:10px;flex-shrink:0}
+.cart-info{flex:1}
+.cart-name{font-size:13px;font-weight:600;color:#1f2937}
+.cart-sub{font-size:12px;color:#6b7280}
+.cart-price{font-size:14px;font-weight:700;color:#4f46e5;margin-right:8px}
+.cart-remove{width:28px;height:28px;background:#f3f4f6;border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6b7280;transition:all .15s;font-family:inherit}
+.cart-remove:hover{background:#fee2e2;color:#991b1b}
+.summary-card{background:#f9fafb;border-radius:12px;padding:1rem 1.25rem;margin-top:12px}
+.summary-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:#6b7280}
+.summary-divider{border:none;border-top:1px solid #e5e7eb;margin:8px 0}
+.summary-total{display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:#1f2937;padding-top:4px}
+.checkout-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px}
+.btn-checkout{background:#4f46e5;color:#fff;border:none;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;font-family:inherit}
+.btn-checkout:hover{background:#3730a3}
+.btn-clear{background:transparent;color:#6b7280;border:1px solid #d1d5db;padding:10px 16px;border-radius:10px;font-size:13px;cursor:pointer;font-family:inherit}
+.form-label{font-size:12px;color:#6b7280;font-weight:600;margin-bottom:4px;display:block}
+.form-ctrl{width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;background:#fff;color:#374151;font-family:inherit}
+.form-ctrl[readonly]{background:#f9fafb;color:#6b7280}
+.form-group{margin-bottom:10px}
+.checkout-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1rem}
+@media(max-width:640px){.checkout-grid{grid-template-columns:1fr}}
+.checkout-section{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:1.25rem}
+.checkout-section-title{font-size:14px;font-weight:600;color:#1f2937;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.radio-opt{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;cursor:pointer;margin-bottom:6px;font-size:13px;color:#374151;transition:all .15s}
+.radio-opt:hover{border-color:#4f46e5}
+.radio-opt.selected{border-color:#4f46e5;background:#ede9fe;color:#4f46e5;font-weight:600}
+.warning-banner{background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:10px 12px;font-size:12px;color:#92400e;margin:12px 0;display:flex;align-items:flex-start;gap:8px}
+.btn-place{background:#4f46e5;color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;transition:all .15s;font-family:inherit}
+.btn-place:hover{background:#3730a3}
+.order-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px}
+.order-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.order-body{flex:1}
+.order-id{font-size:13px;font-weight:600;color:#1f2937;margin-bottom:3px}
+.order-items{font-size:12px;color:#6b7280;margin-bottom:6px}
+.order-footer{display:flex;align-items:center;gap:8px}
+.order-total{font-size:14px;font-weight:700;color:#4f46e5}
+.confirm-card{max-width:400px;margin:2rem auto;background:#fff;border:1px solid #e5e7eb;border-radius:20px;padding:2.5rem 2rem;text-align:center}
+.confirm-icon{width:64px;height:64px;background:#d1fae5;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.confirm-title{font-size:20px;font-weight:700;color:#1f2937;margin-bottom:8px}
+.confirm-sub{font-size:13px;color:#6b7280;line-height:1.6;margin-bottom:20px}
+.confirm-actions{display:flex;flex-direction:column;gap:8px}
+.flash{padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;margin-bottom:12px;display:none;align-items:center;gap:8px}
+.flash.show{display:flex}
+.flash-success{background:#d1fae5;color:#065f46}
+.flash-error{background:#fee2e2;color:#991b1b}
+.footer{background:#0f0f23;color:#4b5563;text-align:center;padding:20px;font-size:12px;line-height:1.8;margin-top:2rem}
+.footer a{color:#818cf8;text-decoration:none}
+.footer strong{color:#a5b4fc}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="navbar">
+  <a class="brand" href="#">
+    <div class="brand-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M3 3h18M3 9h9m-9 6h18M12 15v6M8 21h8"/></svg>
+    </div>
+    PaintShop
+  </a>
+  <ul class="nav-links">
+    <li><button class="nav-btn active" id="nb-home" onclick="showPage('home')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Products
+    </button></li>
+    <li><button class="nav-btn" id="nb-cart" onclick="showPage('cart')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+      Cart <span class="cart-dot" id="cart-count">0</span>
+    </button></li>
+    <li><button class="nav-btn" id="nb-orders" onclick="showPage('orders')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      My Orders
+    </button></li>
+  </ul>
+</div>
+
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-orbs">
+      <div class="orb" style="width:160px;height:160px;background:#5D8A5E;right:60px;top:10px"></div>
+      <div class="orb" style="width:100px;height:100px;background:#CE2939;right:10px;top:60px"></div>
+      <div class="orb" style="width:80px;height:80px;background:#1A6B9A;right:100px;top:80px"></div>
+      <div class="orb" style="width:60px;height:60px;background:#F5C518;right:20px;top:20px"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="#818cf8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Premium Paint Collection
+      </div>
+      <h1>Transform your space with <span>perfect color</span></h1>
+      <p>Browse 6 curated paint shades — interior &amp; exterior. Add to cart, checkout, and track your order all in one place.</p>
+      <div class="hero-actions">
+        <button class="btn-hero btn-cta" onclick="document.getElementById('products-section').scrollIntoView({behavior:'smooth'})">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Browse paints
+        </button>
+        <button class="btn-hero btn-ghost" onclick="showPage('orders')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+          Track orders
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg><div><div class="stat-num">6</div><div class="stat-label">Paint colors</div></div></div>
+    <div class="stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><div><div class="stat-num">NT$300</div><div class="stat-label">Starting price</div></div></div>
+    <div class="stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><div><div class="stat-num">1–5 days</div><div class="stat-label">Delivery</div></div></div>
+    <div class="stat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div><div class="stat-num">Secure</div><div class="stat-label">Payments</div></div></div>
+  </div>
+  <div class="container" id="products-section">
+    <div id="flash-home" class="flash flash-success"></div>
+    <div class="section-header">
+      <div class="section-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>All paints</div>
+      <span class="section-sub" id="result-count"></span>
+    </div>
+    <div class="filter-row">
+      <button class="filter-chip active" onclick="filterPaints('all',this)">All</button>
+      <button class="filter-chip" onclick="filterPaints('Interior',this)">Interior</button>
+      <button class="filter-chip" onclick="filterPaints('Exterior',this)">Exterior</button>
+      <button class="filter-chip" onclick="filterPaints('instock',this)">In stock</button>
+    </div>
+    <div class="paint-grid" id="paint-grid"></div>
+  </div>
+</div>
+
+<div id="page-detail" class="page">
+  <div class="container">
+    <div class="detail-back" onclick="showPage('home')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to products</div>
+    <div id="flash-detail" class="flash flash-success"></div>
+    <div class="detail-layout">
+      <div class="detail-swatch" id="detail-swatch"><div class="detail-swatch-inner" id="detail-swatch-inner"></div></div>
+      <div class="detail-info">
+        <div class="detail-meta-row" id="detail-badges"></div>
+        <div class="detail-name" id="detail-name"></div>
+        <div class="detail-desc" id="detail-desc"></div>
+        <div class="detail-price" id="detail-price"></div>
+        <div id="detail-stock-info" style="margin-bottom:14px"></div>
+        <div class="qty-row" id="detail-qty-row">
+          <div class="qty-ctrl"><button class="qty-btn" onclick="changeQty(-1)">−</button><div class="qty-val" id="qty-display">1</div><button class="qty-btn" onclick="changeQty(1)">+</button></div>
+          <button class="btn-add-cart" onclick="addToCart()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>Add to cart</button>
+          <button class="btn-secondary" onclick="showPage('home')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Continue</button>
+        </div>
+        <div class="feature-tags" id="detail-features"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-cart" class="page">
+  <div class="container">
+    <div class="section-title" style="margin-bottom:1rem"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>Shopping cart</div>
+    <div id="flash-cart" class="flash flash-success"></div>
+    <div id="cart-content"></div>
+  </div>
+</div>
+
+<div id="page-checkout" class="page">
+  <div class="container">
+    <div class="detail-back" onclick="showPage('cart')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to cart</div>
+    <div class="section-title" style="margin-bottom:1rem"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>Checkout</div>
+    <div class="checkout-grid">
+      <div><div class="checkout-section"><div class="checkout-section-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>Order summary</div><div id="checkout-items"></div><div class="summary-card" id="checkout-totals"></div></div></div>
+      <div>
+        <div class="checkout-section" style="margin-bottom:12px">
+          <div class="checkout-section-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Your information</div>
+          <div class="form-group"><label class="form-label">Full name</label><input class="form-ctrl" value="Yasin Guo" readonly></div>
+          <div class="form-group"><label class="form-label">Email</label><input class="form-ctrl" value="yasin@example.com" readonly></div>
+          <div class="form-group"><label class="form-label">Delivery address</label><input class="form-ctrl" value="No. 151, Yingzhuan Rd., Tamsui Dist." readonly></div>
+        </div>
+        <div class="checkout-section">
+          <div class="checkout-section-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Payment method</div>
+          <div class="radio-opt selected" id="pay-cash" onclick="selectOpt('pay','cash',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Cash on delivery</div>
+          <div class="radio-opt" id="pay-credit" onclick="selectOpt('pay','credit',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Credit card</div>
+          <div class="radio-opt" id="pay-bank" onclick="selectOpt('pay','bank',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Bank transfer</div>
+          <div class="checkout-section-title" style="margin-top:14px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Shipping type</div>
+          <div class="radio-opt selected" id="ship-std" onclick="selectOpt('ship','std',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Standard — 3–5 days (free)</div>
+          <div class="radio-opt" id="ship-exp" onclick="selectOpt('ship','exp',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Express — 1–2 days (+NT$100)</div>
+          <div class="warning-banner"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Orders cannot be modified once placed. They can only be returned.</div>
+          <button class="btn-place" onclick="placeOrder()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Place order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-orders" class="page">
+  <div class="container">
+    <div class="section-title" style="margin-bottom:.5rem"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>My orders</div>
+    <p class="section-sub" style="margin-bottom:1rem">Order history and tracking</p>
+    <div id="orders-list"></div>
+  </div>
+</div>
+
+<div id="page-confirm" class="page">
+  <div class="container">
+    <div class="confirm-card">
+      <div class="confirm-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#065f46" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="confirm-title">Order placed!</div>
+      <div class="confirm-sub" id="confirm-msg"></div>
+      <div class="confirm-actions">
+        <button class="btn-checkout" style="justify-content:center" onclick="showPage('orders')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>View my orders</button>
+        <button class="btn-secondary" style="justify-content:center" onclick="showPage('home')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Continue shopping</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <strong>Online Paint Shop</strong> &nbsp;—&nbsp; Tamkang University · Dept. of CSIE · Academic Year 112 Capstone Project<br>
+  <a href="https://github.com/yasin0512/Online-Paint-Shop-CakePHP-project">View source on GitHub</a>
+  &nbsp;|&nbsp; Built with CakePHP 5 + MySQL + XAMPP
+</div>
+</div>
+
+<script>
+const paints=[
+  {id:1,name:'Bell Pepper Green',color:'Green',code:'#5D8A5E',type:'Interior',desc:'A vibrant green inspired by fresh bell peppers. Perfect for living rooms, kitchens, and spaces that need energy.',price:350,stock:65,features:['Low-VOC','Washable','Mold resistant']},
+  {id:2,name:'Tomato Red',color:'Red',code:'#CE2939',type:'Interior',desc:'Bold and energetic red inspired by ripe tomatoes. Great for accent walls and dining rooms.',price:350,stock:45,features:['High coverage','Fade resistant','Premium finish']},
+  {id:3,name:'Ocean Blue',color:'Blue',code:'#1A6B9A',type:'Exterior',desc:'A deep ocean blue for a calming atmosphere. UV-resistant exterior formula built for all weather.',price:420,stock:80,features:['UV resistant','Waterproof','All-weather']},
+  {id:4,name:'Sunshine Yellow',color:'Yellow',code:'#F5C518',type:'Interior',desc:'Bright and cheerful yellow to liven any room. Low-VOC formula safe for children rooms.',price:380,stock:30,features:['Low-VOC','Kid safe','Bright finish']},
+  {id:5,name:'Charcoal Grey',color:'Grey',code:'#4A4A4A',type:'Exterior',desc:'A modern charcoal grey for a sleek, minimalist look. Weather-resistant and highly durable.',price:400,stock:12,features:['Weather resistant','Durable','Matte finish']},
+  {id:6,name:'Ivory White',color:'White',code:'#FFFFF0',type:'Interior',desc:'Clean and classic ivory white. The most versatile and timeless shade for any interior space.',price:300,stock:100,features:['High coverage','Streak free','Washable']},
+];
+let cart={},orders=[
+  {id:'#1001',items:[{name:'Bell Pepper Green',code:'#5D8A5E',qty:2,price:350}],total:850,status:'delivered',date:'2025-03-12'},
+  {id:'#1002',items:[{name:'Ocean Blue',code:'#1A6B9A',qty:1,price:420}],total:570,status:'shipped',date:'2025-03-28'},
+];
+let currentPaint=null,currentQty=1,currentFilter='all',selectedPay='cash',selectedShip='std';
+function fmt(n){return 'NT$ '+n.toLocaleString();}
+function stockBadge(s){
+  if(s===0)return '<span class="badge badge-red">Out of stock</span>';
+  if(s<17)return '<span class="badge badge-amber">Low stock ('+s+')</span>';
+  return '<span class="badge badge-green">In stock</span>';
+}
+function renderGrid(){
+  const grid=document.getElementById('paint-grid');
+  const filtered=paints.filter(p=>{
+    if(currentFilter==='Interior')return p.type==='Interior';
+    if(currentFilter==='Exterior')return p.type==='Exterior';
+    if(currentFilter==='instock')return p.stock>0;
+    return true;
+  });
+  document.getElementById('result-count').textContent=filtered.length+' products';
+  grid.innerHTML=filtered.map(p=>{
+    const s=p.stock;
+    const sbg=s===0?'rgba(0,0,0,.4)':s<17?'rgba(255,200,0,.3)':'rgba(255,255,255,.25)';
+    const stxt=s===0?'#fff':s<17?'#92400e':'#065f46';
+    const stxt2=s===0?'Out of stock':s<17?'Low ('+s+')':'In stock';
+    return `<div class="paint-card" onclick="showDetail(${p.id})">
+      <div class="swatch" style="background:${p.code}">
+        <span class="swatch-badge" style="background:${sbg};color:${stxt}">${stxt2}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${p.name}</div>
+        <div class="card-code">${p.code} · ${p.type}</div>
+        <div class="card-footer">
+          <div class="card-price">${fmt(p.price)}</div>
+          ${p.stock>0?`<button class="add-btn" onclick="event.stopPropagation();quickAdd(${p.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function filterPaints(f,el){
+  currentFilter=f;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');renderGrid();
+}
+function quickAdd(id){
+  const p=paints.find(x=>x.id===id);
+  cart[id]=(cart[id]||0)+1;updateCartCount();
+  showFlash('home','success','"'+p.name+'" added to cart!');
+}
+function showDetail(id){
+  currentPaint=paints.find(p=>p.id===id);currentQty=1;
+  document.getElementById('qty-display').textContent='1';
+  document.getElementById('detail-swatch').style.background=currentPaint.code;
+  document.getElementById('detail-swatch-inner').innerHTML=`<span style="font-size:12px;font-weight:600;color:rgba(255,255,255,.9);background:rgba(0,0,0,.3);padding:4px 10px;border-radius:20px">${currentPaint.code}</span>`;
+  document.getElementById('detail-badges').innerHTML=`<span class="badge badge-blue">${currentPaint.type}</span>`+stockBadge(currentPaint.stock);
+  document.getElementById('detail-name').textContent=currentPaint.name;
+  document.getElementById('detail-desc').textContent=currentPaint.desc;
+  document.getElementById('detail-price').innerHTML=fmt(currentPaint.price)+'<span>/ can</span>';
+  document.getElementById('detail-stock-info').innerHTML=currentPaint.stock>0?`<div style="font-size:13px;color:#6b7280">${currentPaint.stock} cans in warehouse</div>`:'';
+  document.getElementById('detail-qty-row').style.display=currentPaint.stock>0?'flex':'none';
+  document.getElementById('detail-features').innerHTML=currentPaint.features.map(f=>`<span class="badge badge-purple">${f}</span>`).join('');
+  showPage('detail');
+}
+function changeQty(d){currentQty=Math.max(1,Math.min(currentPaint?currentPaint.stock:99,currentQty+d));document.getElementById('qty-display').textContent=currentQty;}
+function addToCart(){
+  const existing=cart[currentPaint.id]||0;
+  if(existing+currentQty>currentPaint.stock){showFlash('detail','error','Not enough stock.');return;}
+  cart[currentPaint.id]=(existing+currentQty);updateCartCount();
+  showFlash('detail','success','"'+currentPaint.name+'" (×'+currentQty+') added to cart!');
+}
+function updateCartCount(){document.getElementById('cart-count').textContent=Object.values(cart).reduce((a,b)=>a+b,0);}
+function showFlash(page,type,msg){
+  const el=document.getElementById('flash-'+page);if(!el)return;
+  el.className='flash show flash-'+type;el.textContent=msg;
+  setTimeout(()=>el.classList.remove('show'),3000);
+}
+function renderCart(){
+  const el=document.getElementById('cart-content');const ids=Object.keys(cart);
+  if(ids.length===0){el.innerHTML=`<div class="cart-empty"><div class="cart-empty-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg></div><p style="font-size:14px;font-weight:600;margin-bottom:6px">Your cart is empty</p><p style="font-size:13px;margin-bottom:14px">Add some beautiful paints!</p><button class="btn-checkout" onclick="showPage('home')">Browse paints</button></div>`;return;}
+  let subtotal=0;
+  const items=ids.map(id=>{const p=paints.find(x=>x.id==id);const qty=cart[id];subtotal+=p.price*qty;return `<div class="cart-item"><div class="cart-swatch" style="background:${p.code}"></div><div class="cart-info"><div class="cart-name">${p.name}</div><div class="cart-sub">${p.type} · ${p.code}</div></div><div class="cart-price">${fmt(p.price*qty)}</div><div style="font-size:12px;color:#6b7280;margin-right:8px">×${qty}</div><button class="cart-remove" onclick="removeItem(${id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button></div>`;}).join('');
+  el.innerHTML=items+`<div class="summary-card"><div class="summary-row"><span>Subtotal</span><span>${fmt(subtotal)}</span></div><div class="summary-row"><span>Shipping</span><span>${fmt(150)}</span></div><hr class="summary-divider"><div class="summary-total"><span>Total</span><span>${fmt(subtotal+150)}</span></div></div><div class="checkout-actions"><button class="btn-clear" onclick="clearCart()">Clear cart</button><button class="btn-checkout" onclick="showPage('checkout')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/></svg>Proceed to checkout</button></div>`;
+}
+function removeItem(id){delete cart[id];updateCartCount();renderCart();}
+function clearCart(){cart={};updateCartCount();renderCart();}
+function renderCheckout(){
+  const ids=Object.keys(cart);let subtotal=0;
+  const rows=ids.map(id=>{const p=paints.find(x=>x.id==id);const qty=cart[id];subtotal+=p.price*qty;return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #e5e7eb"><div style="width:32px;height:32px;border-radius:8px;background:${p.code};flex-shrink:0"></div><div style="flex:1;font-size:13px">${p.name} <span style="color:#6b7280">×${qty}</span></div><div style="font-size:13px;font-weight:700;color:#4f46e5">${fmt(p.price*qty)}</div></div>`;}).join('');
+  document.getElementById('checkout-items').innerHTML=rows;
+  const ship=selectedShip==='exp'?100:0;
+  document.getElementById('checkout-totals').innerHTML=`<div class="summary-row"><span>Subtotal</span><span>${fmt(subtotal)}</span></div><div class="summary-row"><span>Shipping</span><span>${fmt(150+ship)}</span></div><hr class="summary-divider"><div class="summary-total"><span>Total</span><span>${fmt(subtotal+150+ship)}</span></div>`;
+}
+function selectOpt(group,key,el){
+  if(group==='pay'){selectedPay=key;['pay-cash','pay-credit','pay-bank'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.remove('selected');});}
+  else{selectedShip=key;['ship-std','ship-exp'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.remove('selected');});}
+  el.classList.add('selected');if(group==='ship')renderCheckout();
+}
+function placeOrder(){
+  const ids=Object.keys(cart);if(ids.length===0)return;
+  let subtotal=0;
+  const items=ids.map(id=>{const p=paints.find(x=>x.id==id);const qty=cart[id];subtotal+=p.price*qty;p.stock=Math.max(0,p.stock-qty);return{name:p.name,code:p.code,qty,price:p.price};});
+  const ship=selectedShip==='exp'?100:0;
+  const oid='#'+(1000+orders.length+3);
+  orders.unshift({id:oid,items,total:subtotal+150+ship,status:'pending',date:new Date().toISOString().slice(0,10)});
+  cart={};updateCartCount();
+  document.getElementById('confirm-msg').textContent='Order '+oid+' has been placed successfully. We will notify you when it ships!';
+  showPage('confirm');
+}
+function renderOrders(){
+  const el=document.getElementById('orders-list');
+  if(orders.length===0){el.innerHTML=`<div class="cart-empty"><p style="margin-bottom:12px">No orders yet.</p><button class="btn-checkout" onclick="showPage('home')">Start shopping</button></div>`;return;}
+  const sc={pending:{bg:'#fef3c7',color:'#92400e',label:'Pending'},shipped:{bg:'#dbeafe',color:'#1e40af',label:'Shipped'},delivered:{bg:'#d1fae5',color:'#065f46',label:'Delivered'}};
+  el.innerHTML=orders.map(o=>{const s=sc[o.status]||sc.pending;const itemTxt=o.items.map(i=>i.name+' ×'+i.qty).join(', ');const swatches=o.items.slice(0,3).map(i=>`<span style="display:inline-block;width:16px;height:16px;background:${i.code};border-radius:50%;border:2px solid #fff;margin-left:-4px"></span>`).join('');
+  return `<div class="order-card"><div class="order-icon" style="background:${s.bg}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${s.color}" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg></div><div class="order-body"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><div class="order-id">Order ${o.id}</div><span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span></div><div class="order-items">${itemTxt}</div><div class="order-footer"><div style="display:flex;align-items:center;margin-right:6px">${swatches}</div><div class="order-total">${fmt(o.total)}</div><div style="flex:1"></div><div style="font-size:12px;color:#6b7280">${o.date}</div></div></div></div>`;}).join('');
+}
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const map={home:'nb-home',cart:'nb-cart',orders:'nb-orders'};
+  if(map[name])document.getElementById(map[name]).classList.add('active');
+  if(name==='cart')renderCart();
+  if(name==='checkout')renderCheckout();
+  if(name==='orders')renderOrders();
+}
+renderGrid();
+</script>
+</body>
+</html>
