@@ -3,7 +3,29 @@
 > Tamkang University — Department of Computer Science and Information Engineering
 > Academic Year 112 — Capstone Project
 
-An online e-commerce platform for purchasing paint, built with CakePHP 5. Customers can browse and order paint products from home, while staff members manage orders, inventory, and fulfillment through a dedicated backend.
+An online e-commerce platform for purchasing paint, built with **CakePHP 5**, **MySQL**, and **XAMPP**. Customers can browse and order paint products from home, while staff members manage orders, inventory, and fulfillment through a dedicated backend.
+
+---
+
+## Live Demo
+
+**Try the interactive browser demo directly — no installation required:**
+
+[https://yasin0512.github.io/Online-Paint-Shop-CakePHP-project](https://yasin0512.github.io/Online-Paint-Shop-CakePHP-project)
+
+### What you can do in the demo
+
+| Feature | Description |
+|---|---|
+| Browse products | View all 6 paint colors with color swatches, prices, and stock status |
+| Filter | Filter by Interior / Exterior / In stock |
+| Quick add | Click the + button on any card to instantly add to cart |
+| Product detail | Click a paint card for full details, description, and quantity selector |
+| Shopping cart | View items, quantities, subtotal, shipping, and total |
+| Checkout | Select payment method and shipping type, then place an order |
+| Order history | Track all past orders with status indicators (Pending / Shipped / Delivered) |
+
+> The demo runs entirely in the browser with simulated data. No backend or database connection is required to view it.
 
 ---
 
@@ -11,12 +33,12 @@ An online e-commerce platform for purchasing paint, built with CakePHP 5. Custom
 
 | Student ID | Name |
 |---|---|
-| 409840070 | 郭雅馨 Yasin Guo |
-| 409840062 | 陳芃諭 Peng Yu Chen |
-| 409840245 | 壽永馨 Yung-Hsin Shou |
-| 409840302 | 蘇柏銘 Po Ming Su |
+| 409840070 | Yasin Guo (郭雅馨) |
+| 409840062 | Peng Yu Chen (陳芃諭) |
+| 409840245 | Yung-Hsin Shou (壽永馨) |
+| 409840302 | Po Ming Su (蘇柏銘) |
 
-Advisor: Prof. Feng-Cheng Chang 張峯誠 教授
+Advisor: Prof. Feng-Cheng Chang (張峯誠)
 
 ---
 
@@ -24,8 +46,9 @@ Advisor: Prof. Feng-Cheng Chang 張峯誠 教授
 
 ### Customer
 - Browse paint products with color swatches, color codes, and pricing
-- Add items to cart and adjust quantities
-- Place orders with delivery address and payment method selection
+- Filter products by type (Interior / Exterior) or availability
+- Add items to cart with quantity control and stock validation
+- Place orders with delivery address, payment method, and shipping type selection
 - View personal order history and track order status
 
 ### Website Maintenance Staff
@@ -197,14 +220,14 @@ paint-shop/
 
 6 paint products are included in the seed data:
 
-| Name | Color Code | Price |
-|---|---|---|
-| Bell Pepper Green | #5D8A5E | NT$ 350 |
-| Tomato Red | #CE2939 | NT$ 350 |
-| Ocean Blue | #1A6B9A | NT$ 420 |
-| Sunshine Yellow | #F5C518 | NT$ 380 |
-| Charcoal Grey | #4A4A4A | NT$ 400 |
-| Ivory White | #FFFFF0 | NT$ 300 |
+| Name | Color Code | Type | Price |
+|---|---|---|---|
+| Bell Pepper Green | #5D8A5E | Interior | NT$ 350 |
+| Tomato Red | #CE2939 | Interior | NT$ 350 |
+| Ocean Blue | #1A6B9A | Exterior | NT$ 420 |
+| Sunshine Yellow | #F5C518 | Interior | NT$ 380 |
+| Charcoal Grey | #4A4A4A | Exterior | NT$ 400 |
+| Ivory White | #FFFFF0 | Interior | NT$ 300 |
 
 **Test account:** `test@example.com` / `password123`
 
