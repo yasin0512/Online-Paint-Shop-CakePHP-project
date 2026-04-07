@@ -11,7 +11,7 @@ An online e-commerce platform for purchasing paint, built with **CakePHP 5**, **
 
 **Try the interactive browser demo directly — no installation required:**
 
-[https://yasin0512.github.io/Online-Paint-Shop-CakePHP-project](https://yasin0512.github.io/Online-Paint-Shop-CakePHP-project)
+[https://yasin0512.github.io/Online-Paint-Shop-CakePHP-project/paint_shop_premium_demo.html](https://yasin0512.github.io/Online-Paint-Shop-CakePHP-project/paint_shop_premium_demo.html)
 
 ### What you can do in the demo
 
