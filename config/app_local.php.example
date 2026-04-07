@@ -1,0 +1,32 @@
+<?php
+/**
+ * app_local.php.example
+ *
+ * Copy this file to app_local.php and fill in your credentials.
+ * Do NOT commit app_local.php (it is in .gitignore).
+ */
+return [
+    'Datasources' => [
+        'default' => [
+            'host'     => 'localhost',
+            'username' => 'root',
+            'password' => '',       // XAMPP default: empty
+            'database' => 'paint',
+            'url'      => env('DATABASE_URL', null),
+        ],
+        'test' => [
+            'host'     => 'localhost',
+            'username' => 'root',
+            'password' => '',
+            'database' => 'paint_test',
+            'url'      => env('DATABASE_TEST_URL', null),
+        ],
+    ],
+    'EmailTransport' => [
+        'default' => [
+            'className' => 'Smtp',
+            'host'      => 'localhost',
+            'port'      => 25,
+        ],
+    ],
+];
