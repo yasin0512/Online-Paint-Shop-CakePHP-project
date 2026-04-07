@@ -16,7 +16,7 @@ An online e-commerce platform for purchasing paint, built with CakePHP 5. Custom
 | 409840245 | 壽永馨 Yung-Hsin Shou |
 | 409840302 | 蘇柏銘 Po Ming Su |
 
-Advisor: Prof. Feng-Cheng Chang
+Advisor: Prof. Feng-Cheng Chang 張峯誠 教授
 
 ---
 
